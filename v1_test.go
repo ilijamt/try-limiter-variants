@@ -12,7 +12,7 @@ func TestV1(t *testing.T) {
 	t.Run("15 calls in 5 seconds, serially, take, all succeed", func(t *testing.T) {
 		t.Parallel()
 		timeStart := time.Now()
-		l, err := limiter.NewV1(10, 100, time.Second)
+		l, err := limiter.NewV1(15, 10, time.Second)
 		require.NoError(t, err)
 		testLimiterSyncTake(t, l, timeStart, 15, 15, 5*time.Second)
 	})
@@ -35,6 +35,20 @@ func TestV1(t *testing.T) {
 		require.NoError(t, err)
 		testLimiterAsyncTryTake(t, l, 15, 15, 10, 5)
 	})
+}
+
+func BenchmarkV1_Sync_Take(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		l, _ := limiter.NewV1(5, 10, time.Millisecond)
+		benchLimiterSyncTake(l, 5)
+	}
+}
+
+func BenchmarkV1_Async_Take(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		l, _ := limiter.NewV1(5, 10, time.Millisecond)
+		benchLimiterAsyncTake(l, 5)
+	}
 }
 
 func BenchmarkV1_Sync_TryTake(b *testing.B) {

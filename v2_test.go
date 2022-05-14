@@ -39,6 +39,20 @@ func TestV2(t *testing.T) {
 
 }
 
+func BenchmarkV2_Sync_Take(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		l, _ := limiter.NewV2(5, 10, time.Millisecond)
+		benchLimiterSyncTake(l, 5)
+	}
+}
+
+func BenchmarkV2_Async_Take(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		l, _ := limiter.NewV2(5, 10, time.Millisecond)
+		benchLimiterAsyncTake(l, 5)
+	}
+}
+
 func BenchmarkV2_Sync_TryTake(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		l, _ := limiter.NewV2(5, 10, time.Second)
@@ -48,7 +62,7 @@ func BenchmarkV2_Sync_TryTake(b *testing.B) {
 
 func BenchmarkV2_Async_TryTake(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		l, _ := limiter.NewV1(5, 10, time.Second)
+		l, _ := limiter.NewV2(5, 10, time.Second)
 		benchLimiterAsyncTryTake(l, 5)
 	}
 }

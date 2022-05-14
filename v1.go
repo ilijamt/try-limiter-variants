@@ -8,8 +8,7 @@ import (
 type V1 struct {
 	currentTokens, maxCapacity int64
 	regenerationInterval       time.Duration
-
-	mu sync.Mutex
+	mu                         sync.Mutex
 }
 
 func (l *V1) regenerateTokens() {

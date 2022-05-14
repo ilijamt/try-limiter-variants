@@ -16,6 +16,29 @@ func benchLimiterSyncTryTake(l limiter.Limiter, maxCalls int64) {
 		callee()
 	}
 }
+
+func benchLimiterSyncTake(l limiter.Limiter, maxCalls int64) {
+	var callee = func() {}
+	for i := int64(0); i < maxCalls; i++ {
+		l.Take()
+		callee()
+	}
+}
+
+func benchLimiterAsyncTake(l limiter.Limiter, maxCalls int64) {
+	var callee = func() {}
+	var wg = sync.WaitGroup{}
+	wg.Add(int(maxCalls))
+	for i := int64(0); i < maxCalls; i++ {
+		go func() {
+			defer wg.Done()
+			l.Take()
+			callee()
+		}()
+	}
+	wg.Wait()
+}
+
 func benchLimiterAsyncTryTake(l limiter.Limiter, maxCalls int64) {
 	var callee = func() {}
 	var wg = sync.WaitGroup{}
@@ -104,8 +127,8 @@ func testLimiterSyncTake(t *testing.T, l limiter.Limiter, timeStart time.Time, m
 		callee()
 	}
 
-	assert.WithinDuration(t, timeStart.Add(duration), time.Now(), 100*time.Millisecond)
 	assert.EqualValues(t, expectedCalls, called)
+	assert.WithinDuration(t, timeStart.Add(duration), time.Now(), 100*time.Millisecond)
 }
 
 func testLimiterAsyncTake(t *testing.T, l limiter.Limiter, timeStart time.Time, maxCalls, expectedCalls int64, duration time.Duration) {
@@ -131,6 +154,6 @@ func testLimiterAsyncTake(t *testing.T, l limiter.Limiter, timeStart time.Time, 
 	}
 
 	wg.Wait()
-	assert.WithinDuration(t, timeStart.Add(duration), time.Now(), 100*time.Millisecond)
 	assert.EqualValues(t, expectedCalls, called)
+	assert.WithinDuration(t, timeStart.Add(duration), time.Now(), 100*time.Millisecond)
 }
