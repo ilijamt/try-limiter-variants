@@ -95,43 +95,43 @@ type V1 struct {
         mu                         sync.Mutex
 }
 
-func (l *V1) regenerateTokens() <span class="cov3" title="20">{
+func (l *V1) regenerateTokens() <span class="cov4" title="20">{
         l.mu.Lock()
         defer l.mu.Unlock()
         l.currentTokens += 1
         time.AfterFunc(l.regenerationInterval, l.regenerateTokens)
 }</span>
 
-func (l *V1) Take() bool <span class="cov4" title="30">{
-        if l.TryTake() </span><span class="cov3" title="20">{
+func (l *V1) Take() bool <span class="cov5" title="30">{
+        if l.TryTake() </span><span class="cov4" title="20">{
                 return true
         }</span>
 
         <span class="cov3" title="10">t := time.NewTicker(time.Millisecond)
-        for </span><span class="cov10" title="17754">{
+        for </span><span class="cov10" title="1296">{
                 select </span>{
-                case &lt;-t.C:<span class="cov10" title="17754">
+                case &lt;-t.C:<span class="cov10" title="1296">
                         l.mu.Lock()
                         if l.currentTokens &gt; 0 </span><span class="cov3" title="10">{
                                 l.currentTokens -= 1
                                 l.mu.Unlock()
                                 return true
                         }</span>
-                        <span class="cov9" title="17744">l.mu.Unlock()</span>
+                        <span class="cov9" title="1286">l.mu.Unlock()</span>
                 }
         }
 }
 
-func (l *V1) TryTake() bool <span class="cov4" title="60">{
+func (l *V1) TryTake() bool <span class="cov6" title="60">{
         l.mu.Lock()
         defer l.mu.Unlock()
 
-        if l.currentTokens &gt; 0 </span><span class="cov4" title="40">{
+        if l.currentTokens &gt; 0 </span><span class="cov5" title="40">{
                 l.currentTokens -= 1
                 return true
         }</span>
 
-        <span class="cov3" title="20">return false</span>
+        <span class="cov4" title="20">return false</span>
 }
 
 var _ Limiter = (*V1)(nil)
@@ -221,7 +221,6 @@ func (l *V3) regenerateTokens() <span class="cov7" title="20">{
 }</span>
 
 func (l *V3) Take() bool <span class="cov8" title="30">{
-
         if l.TryTake() </span><span class="cov7" title="20">{
                 return true
         }</span>
