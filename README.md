@@ -4,8 +4,7 @@ Limiter
 ### Testing
 
 ```shell
-go test --bench=. -benchmem ./... -coverprofile=coverage.out
-go tool cover -html=coverage.out -o coverage.html
+$ ./test.sh
 ```
 
 ### Benchmark
@@ -15,7 +14,7 @@ go tool cover -html=coverage.out -o coverage.html
 CPU and Memory profiles in [profiling/win](profiling/win)
 
 ```shell
-go test -run=^$ --bench=. -benchmem -benchtime=10000x . -memprofile memprofile.out -cpuprofile cpuprofile.out
+$ ./bench.sh
 goos: windows
 goarch: amd64
 pkg: limiter
@@ -44,6 +43,7 @@ ok      limiter 22.790s
 CPU and Memory profiles in [profiling/linux](profiling/linux)
 
 ```shell
+$ ./bench.sh
 goos: linux
 goarch: amd64
 pkg: limiter
